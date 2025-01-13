@@ -1,5 +1,8 @@
 package httpserver.servlet;
 
+import httpserver.HttpRequest;
+import httpserver.HttpResponse;
+import httpserver.HttpServlet;
 
 public class InternalErrorServlet implements HttpServlet {
 	@Override
