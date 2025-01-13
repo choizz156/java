@@ -1,7 +1,6 @@
-package httpserver.servlet.annotation;
+package server;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -23,8 +22,8 @@ public class AnnotationServletV1 implements HttpServlet {
 		String path = request.getPath();
 
 		for (Object controller : controllers) {
-			Method[] methods = controller.getClass().getDeclaredMethods();
-			for (Method method : methods) {
+			Method[] declaredMethods = controller.getClass().getDeclaredMethods();
+			for (Method method : declaredMethods) {
 				if (method.isAnnotationPresent(Mapping.class)) {
 					Mapping mapping = method.getAnnotation(Mapping.class);
 					String value = mapping.value();
@@ -35,17 +34,15 @@ public class AnnotationServletV1 implements HttpServlet {
 				}
 			}
 		}
-		throw new PageNotFoundException("request=" + path);
+
+		throw new PageNotFoundException("request = " + request);
 	}
 
-	private static void invoke(Object controller, Method method, HttpRequest request, HttpResponse response) {
+	private void invoke(Object controller, Method method, HttpRequest request, HttpResponse response) {
 		try {
 			method.invoke(controller, request, response);
-		} catch (IllegalAccessException | InvocationTargetException e) {
+		}catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 }
-
-
-
