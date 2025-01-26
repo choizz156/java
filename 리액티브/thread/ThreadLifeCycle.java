@@ -1,3 +1,5 @@
+package thread;
+
 public class ThreadLifeCycle {
 
 	public static void main(String[] args) throws InterruptedException {
