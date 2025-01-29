@@ -22,7 +22,7 @@ public class CustomThreadPool {
 		}
 	}
 
-	public void execute(Runnable task) {
+	public void submit(Runnable task) {
 		if (!shutdownRequested) {
 			synchronized (workQueue) {
 				workQueue.add(task);
@@ -37,6 +37,7 @@ public class CustomThreadPool {
 			workQueue.notifyAll(); // 대기 중인 모든 작업자 스레드 깨우기
 		}
 
+		//스레드 종료까지 대기
 		for (Thread worker : workerThreads) {
 			try {
 				worker.join();
@@ -50,8 +51,8 @@ public class CustomThreadPool {
 
 		@Override
 		public void run() {
-			while (!shutdownRequested || !workQueue.isEmpty()) {
-				Runnable currentTask;
+			Runnable currentTask;
+			while (!shutdownRequested && workQueue.isEmpty()) {
 				synchronized (workQueue) {
 					while (workQueue.isEmpty() && !shutdownRequested) {
 						try {
@@ -60,16 +61,13 @@ public class CustomThreadPool {
 							Thread.currentThread().interrupt();
 						}
 					}
-					currentTask = workQueue.poll();
-				}
-
-				if (currentTask != null) {
-					try {
-						currentTask.run();
-					} catch (RuntimeException e) {
-						System.err.println("Task execution failed: " + e.getMessage());
+					if (!workQueue.isEmpty()) {
+						currentTask = workQueue.poll();
+					}else{
+						continue;
 					}
 				}
+				currentTask.run();
 			}
 		}
 	}
