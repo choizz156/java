@@ -29,9 +29,7 @@ class ExecutorServiceTest {
 	@Test
 	void test1() {
 
-		Runnable runnable = () -> {
-			System.out.println(Thread.currentThread().getName());
-		};
+		Runnable runnable = () -> System.out.println(Thread.currentThread().getName());
 
 		executorService.execute(runnable);
 
